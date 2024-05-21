@@ -1,6 +1,8 @@
 @Personalized_Library_System_HostAddress = http://localhost:5009
 
-GET {{Personalized_Library_System_HostAddress}}/weatherforecast/
+
+GET {{Personalized_Library_System_HostAddress}}/user/
+
 Accept: application/json
 
 ###

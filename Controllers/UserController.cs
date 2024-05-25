@@ -1,28 +1,32 @@
 using Personalized_Library_System.Models;
-using Personalized_Library_System.Services;
+using Personalized_Library_System.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace Personalized_Library_System.Controllers;
 
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]/")]
 public class UserController : ControllerBase
 {
-    public UserController()
+
+    private readonly AppDbContext _context;
+
+    public UserController(AppDbContext context)
     {
+        _context = context;
     }
 
     [HttpGet]
     // This Returns the list of all users in the database
-    public ActionResult<List<User>> Get() =>
-        UserService.GetAll();
+    public async Task<ActionResult<IEnumerable<User>>> Get() =>
+        await _context.User.ToListAsync();
 
     [HttpGet("{id}")]
-    public ActionResult<User> Get(int id)
+    public async Task<ActionResult<User>> Get(int id)
     {
         // This Returns a User with the specified ID {id}
-        var user = UserService.Get(id);
+        var user = await _context.User.FindAsync(id);
 
         if (user is null)
             return NotFound();
@@ -31,49 +35,72 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Create([FromForm] User user)
+    public async Task<IActionResult> Create([FromForm] User user)
     {
         // this validates the user request to avoid duplicate entries
-        // before creating a new user in the database        
-        if (user.email is not null)
-        {
-            var userServiceUser = UserService.GetByEmail(user.email);
-            if (userServiceUser != null && user.email == userServiceUser.email)
-                return BadRequest();
-        }
+        // before creating a new user in the database
+        if (user.Password == null)
+            return BadRequest("Password Cannot Be Empty");
+        
+        var userEmail = await _context.User.FirstOrDefaultAsync(u => u.Email == user.Email);
+        if (user.Email == userEmail?.Email)
+            return BadRequest("User Already Exists");
 
-        UserService.Add(user);
-        return CreatedAtAction(nameof(Get), new { id = user.id }, user);
+        user.Password = HashPassword(user.Password); 
+        _context.User.Add(user);
+        await _context.SaveChangesAsync();
+        return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
         
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update([FromForm] int id,[FromForm] User user)
+    public async Task<IActionResult> Update([FromForm] int id,[FromForm] User user)
     {
         // This Updates a specific User object using the {id}
         // to retrieve the User and update the user type.
-        if (id != user.id)
+        if (id != user.Id)
             return BadRequest();
 
-        var existingUser = UserService.Get(id);
+        var existingUser = await _context.User.FindAsync(id);
         if (existingUser is null)
             return NotFound();
         
-        UserService.Update(user);
+        _context.Entry(user).State = EntityState.Modified;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (existingUser is null)
+            {
+                return NotFound();
+            }
+            else
+                throw;
+        }
 
         return Ok();
     }
 
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var user = UserService.Get(id);
+        var user = await _context.User.FindAsync(id);
 
-        if (user is null)
+        if (user == null)
             return NotFound();
 
-        UserService.Delete(id);
+        _context.User.Remove(user);
+        await _context.SaveChangesAsync();
 
         return Ok();
     }
+
+    private static string HashPassword(string password)
+    {
+        return BCrypt.Net.BCrypt.HashPassword(password);
+    }
+
 }

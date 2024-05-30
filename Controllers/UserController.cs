@@ -2,6 +2,7 @@ using Personalized_Library_System.Models;
 using Personalized_Library_System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Personalized_Library_System.Controllers;
 
@@ -9,24 +10,23 @@ namespace Personalized_Library_System.Controllers;
 [Route("api/[controller]/")]
 public class UserController : ControllerBase
 {
-
-    private readonly AppDbContext _context;
+    private readonly AppDbContext context;
 
     public UserController(AppDbContext context)
     {
-        _context = context;
+        this.context = context;
     }
 
     [HttpGet]
     // This Returns the list of all users in the database
     public async Task<ActionResult<IEnumerable<User>>> Get() =>
-        await _context.User.ToListAsync();
+        await context.User.ToListAsync();
 
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> Get(int id)
     {
         // This Returns a User with the specified ID {id}
-        var user = await _context.User.FindAsync(id);
+        var user = await context.User.FindAsync(id);
 
         if (user is null)
             return NotFound();
@@ -42,13 +42,13 @@ public class UserController : ControllerBase
         if (user.Password == null)
             return BadRequest("Password Cannot Be Empty");
         
-        var userEmail = await _context.User.FirstOrDefaultAsync(u => u.Email == user.Email);
+        var userEmail = await context.User.FirstOrDefaultAsync(u => u.Email == user.Email);
         if (user.Email == userEmail?.Email)
             return BadRequest("User Already Exists");
 
         user.Password = HashPassword(user.Password); 
-        _context.User.Add(user);
-        await _context.SaveChangesAsync();
+        context.User.Add(user);
+        await context.SaveChangesAsync();
         return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
         
     }
@@ -61,15 +61,15 @@ public class UserController : ControllerBase
         if (id != user.Id)
             return BadRequest();
 
-        var existingUser = await _context.User.FindAsync(id);
+        var existingUser = await context.User.FindAsync(id);
         if (existingUser is null)
             return NotFound();
         
-        _context.Entry(user).State = EntityState.Modified;
+        context.Entry(user).State = EntityState.Modified;
 
         try
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -87,13 +87,13 @@ public class UserController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var user = await _context.User.FindAsync(id);
+        var user = await context.User.FindAsync(id);
 
         if (user == null)
             return NotFound();
 
-        _context.User.Remove(user);
-        await _context.SaveChangesAsync();
+        context.User.Remove(user);
+        await context.SaveChangesAsync();
 
         return Ok();
     }

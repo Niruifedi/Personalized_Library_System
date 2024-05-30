@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Personalized_Library_System.Models;
 
 namespace Personalized_Library_System.Services;
@@ -10,26 +11,27 @@ public static class UserService
     {
         Users =
         [
-            new() { id = 1, name = "John Doe", email = "john.doe@hotmail.com", username = "j.doe"},
-            new() { id = 2, name = "Jane Doe", email = "jane.doe@hotmail.com", username = "jn.doe"},
-            new() { id = 3, name = "John Smith", email = "john.smith@hotmail.com", username = "j.smith"},
-            new() { id = 4, name = "Jane Smith", email = "jane.smith@hotmail.com", username = "jn.smith"}
+            new() { Id = 1, Name = "John Doe", Email = "john.doe@hotmail.com", Username = "j.doe"},
+            new() { Id = 2, Name = "Jane Doe", Email = "jane.doe@hotmail.com", Username = "jn.doe"},
+            new() { Id = 3, Name = "John Smith", Email = "john.smith@hotmail.com", Username = "j.smith"},
+            new() { Id = 4, Name = "Jane Smith", Email = "jane.smith@hotmail.com", Username = "jn.smith"}
         ];
     }
 
     public static List<User> GetAll() => Users;
 
-    public static User? Get(int id) => Users.FirstOrDefault(p => p.id == id);
+    public static User? Get(int id) => Users.FirstOrDefault(p => p.Id == id);
 
     public static void Add(User user)
     {
-        user.id = nextId++;
+        user.Id = nextId++;
         Users.Add(user);
+        
     }
 
     public static User? GetByEmail(string email)
     {
-        return Users.FirstOrDefault(user => user.email == email);
+        return Users.FirstOrDefault(user => user.Email == email);
     }
 
     public static void Delete(int id)
@@ -43,7 +45,7 @@ public static class UserService
 
     public static void Update(User user)
     {
-        var index = Users.FindIndex(p => p.id == user.id);
+        var index = Users.FindIndex(p => p.Id == user.Id);
         if (index == -1)
             return;
         // Users.Insert(index, user);

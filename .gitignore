@@ -160,6 +160,7 @@ UpgradeLog*.htm
 **/App_Data/*.mdf
 **/App_Data/*.ldf
 **/App_Data/*.sdf
+.libraryDb.db
 
 
 #LightSwitch generated files
@@ -224,3 +225,4 @@ AppPackages/
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
+/birth_cert.pdf

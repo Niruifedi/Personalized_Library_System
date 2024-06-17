@@ -16,4 +16,5 @@ public class AppDbContext: DbContext
     }
     public DbSet<User> User { get; set; }
     public DbSet<Books> Books { get; set; }
+    public DbSet<User_Catalogue> Catalogues { get; set; }
 }

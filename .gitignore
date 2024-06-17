@@ -209,6 +209,10 @@ project.lock.json
 
 # Visual Studio Code
 .vscode/
+.vs/
+
+# Migrations
+Migrations/
 
 # Output folder used by Webpack or other FE stuff
 **/node_modules/*
@@ -226,4 +230,4 @@ AppPackages/
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
 /birth_cert.pdf
-/.github/
+.github/

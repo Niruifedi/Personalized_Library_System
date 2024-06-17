@@ -46,6 +46,13 @@ public class BookController : ControllerBase
 
             _context.Books.Add(books1);
             await _context.SaveChangesAsync();
+
+            // User_Catalogue useerCatalogue = new User_Catalogue{
+            //     Books = new List<Books> { books1 }
+            // };
+            // var newBook = new List<Books> {books1};
+            // if (newBook != null)
+            //     _context.Catalogues.AddAsync(newBook);
         }
         else
         {

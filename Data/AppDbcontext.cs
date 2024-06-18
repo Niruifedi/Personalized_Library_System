@@ -9,10 +9,22 @@ public class AppDbContext: DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // This is where the relationships between the tables are defined
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id);
         });
+
+        modelBuilder.Entity<Books>(entity =>
+        {
+            // This defines the relationship between the Books and Catalogue tables
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.Catalogue)
+                .WithMany(e => e.Books)
+                .HasForeignKey(e => e.CatalogueId);
+        });
+
+        // ;
     }
     public DbSet<User> User { get; set; }
     public DbSet<Books> Books { get; set; }

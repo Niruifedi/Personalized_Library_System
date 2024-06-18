@@ -54,18 +54,18 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update([FromForm] int id,[FromForm] User user)
+    public async Task<IActionResult> Update([FromForm] int id)
     {
         // This Updates a specific User object using the {id}
         // to retrieve the User and update the user type.
-        if (id != user.Id)
+        if (id == 0)
             return BadRequest();
 
         var existingUser = await context.User.FindAsync(id);
         if (existingUser is null)
             return NotFound();
         
-        context.Entry(user).State = EntityState.Modified;
+        context.Entry(existingUser).State = EntityState.Modified;
 
         try
         {

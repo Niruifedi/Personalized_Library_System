@@ -5,10 +5,22 @@ namespace Personalized_Library_System.Models;
 [Table("Books")]
 public class Books
 {
-    public int Id { get; set; }
+    public static int _lastId = 0;
+    public int Id { get; private set; }
 
     public string? Title { get; set; }
     public string? FilePath { get; set; }
+    public string? Genre { get; set; }
+    public int CatalogueId { get; set; }
+    public User_Catalogue? Catalogue { get; set; }
+
+    public Books() {}
+
+    public int Item()
+    {
+        Id = ++_lastId;
+        return Id;
+    }
 
 }
 

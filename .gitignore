@@ -212,7 +212,8 @@ project.lock.json
 .vs/
 
 # Migrations
-Migrations/
+Migrations/*
+Migrations/AppDbContextModelSnapshot.cs
 
 # Output folder used by Webpack or other FE stuff
 **/node_modules/*
@@ -229,5 +230,5 @@ AppPackages/
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
-/birth_cert.pdf
+/*.pdf
 .github/

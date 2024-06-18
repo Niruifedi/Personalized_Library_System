@@ -29,13 +29,21 @@ namespace Personalized_Library_System.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CatalogueId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("FilePath")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Genre")
                         .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CatalogueId");
 
                     b.ToTable("Books");
                 });
@@ -73,9 +81,6 @@ namespace Personalized_Library_System.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CatalogueId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -88,35 +93,39 @@ namespace Personalized_Library_System.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CatalogueId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Catalogue");
                 });
 
-            modelBuilder.Entity("Personalized_Library_System.Models.User_Catalogue", b =>
+            modelBuilder.Entity("Personalized_Library_System.Models.Books", b =>
                 {
                     b.HasOne("Personalized_Library_System.Models.User_Catalogue", "Catalogue")
-                        .WithMany()
+                        .WithMany("Books")
                         .HasForeignKey("CatalogueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Personalized_Library_System.Models.User", "User")
+                    b.Navigation("Catalogue");
+                });
+
+            modelBuilder.Entity("Personalized_Library_System.Models.User_Catalogue", b =>
+                {
+                    b.HasOne("Personalized_Library_System.Models.User", null)
                         .WithMany("Catalogues")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Catalogue");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Personalized_Library_System.Models.User", b =>
                 {
                     b.Navigation("Catalogues");
+                });
+
+            modelBuilder.Entity("Personalized_Library_System.Models.User_Catalogue", b =>
+                {
+                    b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
         }

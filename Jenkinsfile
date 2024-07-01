@@ -8,11 +8,11 @@ pipeline {
         }
         stage('Code Analysis') {
             environment {
-                scannerHome = tool name: 'Personalized_Library'
+                scannerHome = tool name: 'sonar'
             }
             steps {
                 script {
-                    withSonarQubeEnv('Personalized_Library') {
+                    withSonarQubeEnv('sonar') {
                         sh """
                             ${scannerHome}/bin/sonar-scanner \
                                 -Dsonar.projectKey=Personalized_Library \

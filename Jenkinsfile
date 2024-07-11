@@ -8,7 +8,7 @@ pipeline {
         }
         stage('Code Analysis') {
             environment {
-                scannerHome = tool name: 'sonar'
+                scannerHome = tool name: 'Personalized_Library'
             }
             steps {
                 script {
